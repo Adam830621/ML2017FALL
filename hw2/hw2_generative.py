@@ -87,4 +87,4 @@ temp = normalize(temp)
 X = temp[:X.shape[0]]
 X_test = temp[X.shape[0]:]
 y_pred = train(X, y, X_test)
-print('finished!!!')
+
