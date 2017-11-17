@@ -1,15 +1,12 @@
 import pandas as pd
 import numpy as np
 import sys
-from keras.optimizers import Adam, SGD
+from keras.optimizers import Adam
 from keras.callbacks import ModelCheckpoint
 from keras.preprocessing.image import ImageDataGenerator
 from keras.callbacks import ReduceLROnPlateau, CSVLogger, EarlyStopping
-from keras.utils import plot_model
 from keras.models import Sequential
-from keras.layers.advanced_activations import LeakyReLU
-from keras.models import load_model
-from keras.layers import Convolution2D, MaxPooling2D, Flatten, Dense, Activation, ZeroPadding2D, Conv2D, Dropout
+from keras.layers import MaxPooling2D, Flatten, Dense, Conv2D, Dropout
 from keras.utils import np_utils
 from keras.layers.normalization import BatchNormalization
 TRAIN = sys.argv[1]
