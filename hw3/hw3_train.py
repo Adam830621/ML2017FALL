@@ -1,7 +1,6 @@
 import pandas as pd
 import numpy as np
 import sys
-import matplotlib.pyplot as plt
 from keras.optimizers import Adam, SGD
 from keras.callbacks import ModelCheckpoint
 from keras.preprocessing.image import ImageDataGenerator
@@ -13,7 +12,7 @@ from keras.models import load_model
 from keras.layers import Convolution2D, MaxPooling2D, Flatten, Dense, Activation, ZeroPadding2D, Conv2D, Dropout
 from keras.utils import np_utils
 from keras.layers.normalization import BatchNormalization
-
+TRAIN = sys.argv[1]
 
 
 def cro_val(X, y, n):
@@ -29,31 +28,23 @@ def read_data(filename,test=False):
         
     X = []
     
+    
     for i in data[index[1]]:
-        X.append(i.split(' '))               
+        X.append(i.split(' '))  
 
+    X = np.array(X).reshape(-1,48,48,1).astype('float') / 255           
+     
+    
     if test == True:
-        return np.array(X).reshape(-1,48,48,1).astype('float') / 255
+        return X
     else:
-        return np.array(X).reshape(-1,48,48,1).astype('float') / 255, np_utils.to_categorical(y, 7)
+        return X, np_utils.to_categorical(y, 7)
 
 
-def out_data(X, filename):
 
-    y = model.predict(X)
-    pred = np.argmax(y, axis = 1)
-
-    
-    with open(filename+'.csv','w') as f:
-        f.write('id,label\n')
-        for i in range(pred.shape[0]):
-            f.write( str(i) + ',' + str(pred[i]) + '\n')
-    print('output finished!!!\n')
-    
+        
     
 
-
-TRAIN = sys.argv[1]
 
 np.random.seed(0)
 
@@ -131,26 +122,9 @@ checkpointer = ModelCheckpoint(filepath='./model_{epoch:05d}_{val_acc:.5f}.h5', 
 
 print('---------------Model fitting---------------')
 
+
+
 history = model.fit_generator(datagen.flow(X, y, batch_size=128), steps_per_epoch=1000, epochs=8000, validation_data=(X_valid, y_valid), max_queue_size=100, callbacks=[lr_reducer, earlyStopping, csv_logger, checkpointer])
-
-    
-
-
-plt.plot(history.history['acc'])
-plt.plot(history.history['val_acc'])
-plt.title('model accuracy')
-plt.ylabel('accuracy')
-plt.xlabel('epoch')
-plt.legend(['train', 'valid'], loc='upper left')
-plt.show()
-# summarize history for loss
-plt.plot(history.history['loss'])
-plt.plot(history.history['val_loss'])
-plt.title('model loss')
-plt.ylabel('loss')
-plt.xlabel('epoch')
-plt.legend(['train', 'valid'], loc='upper left')
-plt.show()
 
 confusion_matrix = pd.crosstab(np.argmax(y_valid,-1), model.predict_classes(X_valid), rownames=['label'], colnames=['predict'])
 
