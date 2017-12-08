@@ -47,7 +47,7 @@ Test_data = np.array(tmp)
 
 model = load_model('./model_best.h5')
 model.summary()
-pred = model.predict(Test_data, verbose=1)
+pred = model.predict(Test_data, verbose=1, batch_size=1024)
 
 pred[pred <0.5] = 0
 pred[pred >=0.5] = 1 
